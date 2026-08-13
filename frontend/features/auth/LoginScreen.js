@@ -73,9 +73,11 @@ export default function LoginScreen({ onLoginSuccess }) {
         
         {/* Floating Badges (Top Right) */}
         <View style={styles.topRightBadges}>
-          <View style={styles.yellowBadge}>
-            <Text style={styles.yellowBadgeText}>🎓</Text>
-          </View>
+          <Image 
+            source={require('../../assets/logo.png')} 
+            style={{ width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: '#FFFFFF' }}
+            resizeMode="cover"
+          />
           <View style={styles.bookBadge}>
             <Text style={styles.bookBadgeText}>📘</Text>
           </View>
