@@ -1,28 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  TouchableOpacity, 
+  ActivityIndicator, 
+  TextInput,
+  Image
+} from 'react-native';
 import axios from 'axios';
-import CustomCard from '../../components/CustomCard';
 
 export default function StudentDashboard({ token, onNavigate, onLogout }) {
   const [profile, setProfile] = useState(null);
   const [attendance, setAttendance] = useState(null);
   const [homework, setHomework] = useState([]);
   const [notices, setNotices] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
   const fetchAll = async () => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       const [profileRes, attRes, hwRes, noticeRes] = await Promise.all([
-        axios.get('/api/student/profile', { headers }),
-        axios.get('/api/student/attendance', { headers }),
-        axios.get('/api/student/homework', { headers }),
-        axios.get('/api/student/notices', { headers }),
+        axios.get('/api/student/profile', { headers }).catch(() => ({ data: null })),
+        axios.get('/api/student/attendance', { headers }).catch(() => ({ data: null })),
+        axios.get('/api/student/homework', { headers }).catch(() => ({ data: [] })),
+        axios.get('/api/student/notices', { headers }).catch(() => ({ data: [] })),
       ]);
       setProfile(profileRes.data);
       setAttendance(attRes.data);
-      setHomework(hwRes.data);
-      setNotices(noticeRes.data);
+      setHomework(hwRes.data || []);
+      setNotices(noticeRes.data || []);
     } catch (err) {
       console.error('Error fetching student dashboard data', err);
     } finally {
@@ -37,7 +46,7 @@ export default function StudentDashboard({ token, onNavigate, onLogout }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="var(--color-accent)" />
+        <ActivityIndicator size="large" color="#042940" />
       </View>
     );
   }
@@ -46,163 +55,489 @@ export default function StudentDashboard({ token, onNavigate, onLogout }) {
   const pendingHw = homework.filter(h => new Date(h.date) >= new Date()).length;
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.avatarCircle}>
-            <Text style={styles.avatarText}>{profile?.name?.[0] || 'S'}</Text>
-          </View>
-          <View>
-            <Text style={styles.welcome}>Student Dashboard</Text>
-            <Text style={styles.name}>{profile?.name || 'Student'}</Text>
-            <Text style={styles.code}>{profile?.studentCode || ''}</Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Attendance Card */}
-      <CustomCard>
-        <Text style={styles.cardTitle}>📊 Attendance Summary</Text>
-        <View style={styles.attRow}>
-          <View style={styles.attCircle}>
-            <Text style={[styles.attPct, { color: pct >= 75 ? '#2ecc71' : '#ff4757' }]}>{pct}%</Text>
-            <Text style={styles.attLabel}>Present</Text>
-          </View>
-          <View style={styles.attStats}>
-            <View style={styles.attStatRow}>
-              <Text style={styles.attStatLabel}>Present Days:</Text>
-              <Text style={[styles.attStatVal, { color: '#2ecc71' }]}>{attendance?.presentCount || 0}</Text>
+    <ScrollView style={styles.container} bounces={false}>
+      {/* ===== 1. DARK NAVY HEADER CONTAINER ===== */}
+      <View style={styles.darkHeader}>
+        {/* User Info Bar */}
+        <View style={styles.userRow}>
+          <View style={styles.userLeft}>
+            <View style={styles.avatarBorder}>
+              <Text style={styles.avatarInitials}>
+                {profile?.name ? profile.name.split(' ').map(n => n[0]).join('').substring(0, 2) : 'KS'}
+              </Text>
             </View>
-            <View style={styles.attStatRow}>
-              <Text style={styles.attStatLabel}>Total Days:</Text>
-              <Text style={styles.attStatVal}>{attendance?.totalDays || 0}</Text>
-            </View>
-            <View style={styles.attStatRow}>
-              <Text style={styles.attStatLabel}>Status:</Text>
-              <Text style={[styles.attStatVal, { color: pct >= 75 ? '#2ecc71' : '#ff4757' }]}>
-                {pct >= 75 ? '✅ Good' : '⚠️ Low'}
+            <View style={styles.userTextCol}>
+              <Text style={styles.userName}>
+                {profile?.name ? profile.name.toUpperCase() : 'KRISH KUMAR SAH'}
+              </Text>
+              <Text style={styles.userCode}>
+                {profile?.studentCode || 'S.3183'}
               </Text>
             </View>
           </View>
-        </View>
-        <View style={styles.progressBg}>
-          <View style={[styles.progressFill, { width: `${pct}%`, backgroundColor: pct >= 75 ? '#2ecc71' : '#ff4757' }]} />
-        </View>
-        <TouchableOpacity onPress={() => onNavigate('AttendanceView')}>
-          <Text style={styles.viewAll}>View Full Attendance →</Text>
-        </TouchableOpacity>
-      </CustomCard>
 
-      {/* Quick Stats */}
-      <View style={styles.statsRow}>
-        <TouchableOpacity style={styles.statCard} onPress={() => onNavigate('HomeworkView')}>
-          <Text style={styles.statIcon}>📝</Text>
-          <Text style={styles.statNum}>{pendingHw}</Text>
-          <Text style={styles.statLabel}>Due Homeworks</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.statCard} onPress={() => onNavigate('NoticeScreen')}>
-          <Text style={styles.statIcon}>🔔</Text>
-          <Text style={styles.statNum}>{notices.length}</Text>
-          <Text style={styles.statLabel}>Notices</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.statCard} onPress={() => onNavigate('StudentFeesScreen')}>
-          <Text style={styles.statIcon}>💳</Text>
-          <Text style={styles.statNum}>View</Text>
-          <Text style={styles.statLabel}>Fees Status</Text>
-        </TouchableOpacity>
+          {/* Right Action Icons (Notification & Logout) */}
+          <View style={styles.topRightActions}>
+            <TouchableOpacity style={styles.bellBtn} onPress={() => onNavigate('NoticeScreen')}>
+              <Text style={styles.bellIcon}>🔔</Text>
+              <View style={styles.badgeCount}>
+                <Text style={styles.badgeText}>276</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
+              <Text style={styles.logoutText}>Exit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Top 4 Quick Nav Grid */}
+        <View style={styles.quickNavRow}>
+          <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('StudentDashboard')}>
+            <View style={styles.navIconBoxActive}>
+              <Text style={styles.navIcon}>📊</Text>
+            </View>
+            <Text style={styles.navLabel}>Dashboard</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('AttendanceView')}>
+            <View style={styles.navIconBox}>
+              <Text style={styles.navIcon}>👤</Text>
+            </View>
+            <Text style={styles.navLabel}>My Profile</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('HomeworkView')}>
+            <View style={styles.navIconBox}>
+              <Text style={styles.navIcon}>🏆</Text>
+            </View>
+            <Text style={styles.navLabel}>Achievements</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('StudentFeesScreen')}>
+            <View style={styles.navIconBox}>
+              <Text style={styles.navIcon}>👨‍👩‍👧</Text>
+            </View>
+            <Text style={styles.navLabel}>Siblings</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Today's Homework Preview */}
-      <Text style={styles.sectionTitle}>📋 Pending Homework</Text>
-      {homework.length === 0 ? (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>🎉 No pending homework right now!</Text>
+      {/* ===== 2. FLOATING SEARCH BAR ===== */}
+      <View style={styles.searchWrapper}>
+        <View style={styles.searchContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search modules..."
+            placeholderTextColor="#94A3B8"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
         </View>
-      ) : (
-        homework.slice(0, 3).map((hw) => (
-          <View key={hw.id} style={styles.hwCard}>
-            <View style={styles.hwLeft}>
-              <Text style={styles.hwTitle}>{hw.title}</Text>
-              <Text style={styles.hwDue}>Due: {hw.date}</Text>
-            </View>
-            <Text style={styles.hwBadge}>{hw.classId}</Text>
-          </View>
-        ))
-      )}
-      {homework.length > 3 && (
-        <TouchableOpacity onPress={() => onNavigate('HomeworkView')}>
-          <Text style={styles.viewAll}>View All {homework.length} Homeworks →</Text>
-        </TouchableOpacity>
-      )}
+      </View>
 
-      {/* Recent Notices */}
-      <Text style={[styles.sectionTitle, { marginTop: 20 }]}>📢 Recent Notices</Text>
-      {notices.length === 0 ? (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>No notices at the moment.</Text>
+      {/* ===== 3. DASHBOARD MODULE SECTIONS ===== */}
+      <View style={styles.bodyContent}>
+        {/* Academic Overview Quick Bar */}
+        <View style={styles.summaryBarRow}>
+          <TouchableOpacity style={styles.summaryPill} onPress={() => onNavigate('AttendanceView')}>
+            <Text style={styles.summaryIcon}>📈</Text>
+            <View>
+              <Text style={styles.summaryVal}>{pct}%</Text>
+              <Text style={styles.summarySub}>Attendance</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.summaryPill} onPress={() => onNavigate('HomeworkView')}>
+            <Text style={styles.summaryIcon}>📝</Text>
+            <View>
+              <Text style={styles.summaryVal}>{pendingHw}</Text>
+              <Text style={styles.summarySub}>Homeworks</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      ) : (
-        notices.slice(0, 2).map((n) => (
-          <View key={n.id} style={styles.noticeCard}>
-            <Text style={styles.noticeTitle}>{n.title}</Text>
-            <Text style={styles.noticeSub} numberOfLines={2}>{n.message}</Text>
-            <Text style={styles.noticeDate}>{n.createdAt}</Text>
+
+        {/* Section: Who We Are */}
+        <View style={styles.sectionWrapper}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.blueBarAccent} />
+            <Text style={styles.sectionTitle}>Who We Are</Text>
           </View>
-        ))
-      )}
-      {notices.length > 2 && (
-        <TouchableOpacity onPress={() => onNavigate('NoticeScreen')}>
-          <Text style={[styles.viewAll, { marginBottom: 40 }]}>View All Notices →</Text>
-        </TouchableOpacity>
-      )}
+          <View style={styles.gridCard}>
+            <View style={styles.gridRow}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('NoticeScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>ℹ️</Text>
+                </View>
+                <Text style={styles.gridLabel}>About Us</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('NoticeScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>🔀</Text>
+                </View>
+                <Text style={styles.gridLabel}>Staff Hierarchy</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('NoticeScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>💬</Text>
+                </View>
+                <Text style={styles.gridLabel}>Notice Board</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={[styles.gridRow, { marginTop: 18 }]}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('NoticeScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>🛡️</Text>
+                </View>
+                <Text style={styles.gridLabel}>Privacy Policy</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('NoticeScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>📇</Text>
+                </View>
+                <Text style={styles.gridLabel}>Employee Directory</Text>
+              </TouchableOpacity>
+
+              <View style={styles.gridItem} /> {/* Empty spacer for 3-col grid */}
+            </View>
+          </View>
+        </View>
+
+        {/* Section: Services & Facilities */}
+        <View style={styles.sectionWrapper}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.blueBarAccent} />
+            <Text style={styles.sectionTitle}>Services & Facilities</Text>
+          </View>
+          <View style={styles.gridCard}>
+            <View style={styles.gridRow}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('HomeworkView')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>🎓</Text>
+                </View>
+                <Text style={styles.gridLabel}>Academics Program</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('AttendanceView')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>🏢</Text>
+                </View>
+                <Text style={styles.gridLabel}>Available Facilities</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('StudentFeesScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>👤✓</Text>
+                </View>
+                <Text style={styles.gridLabel}>Admission Procedure</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* Section: Setup */}
+        <View style={styles.sectionWrapper}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.blueBarAccent} />
+            <Text style={styles.sectionTitle}>Setup</Text>
+          </View>
+          <View style={styles.gridCard}>
+            <View style={styles.gridRow}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('StudentDashboard')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>⚙️</Text>
+                </View>
+                <Text style={styles.gridLabel}>Setting</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('StudentDashboard')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>📅</Text>
+                </View>
+                <Text style={styles.gridLabel}>Date Format</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('StudentDashboard')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>🔄🔒</Text>
+                </View>
+                <Text style={styles.gridLabel}>Change Password</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
       <View style={{ height: 40 }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: 'var(--bg-app)' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--bg-app)' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatarCircle: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#0076a8', justifyContent: 'center', alignItems: 'center' },
-  avatarText: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  welcome: { fontSize: 11, color: 'var(--text-muted)', fontWeight: '500' },
-  name: { fontSize: 16, fontWeight: '700', color: 'var(--text-main)', fontFamily: 'var(--font-accent)' },
-  code: { fontSize: 11, color: '#2ecc71', fontWeight: '600' },
-  logoutBtn: { backgroundColor: 'var(--bg-icon)', borderWidth: 1, borderColor: 'var(--border-color)', borderRadius: 20, paddingVertical: 6, paddingHorizontal: 12 },
-  logoutText: { fontSize: 11, color: 'var(--color-danger)', fontWeight: '600' },
-  cardTitle: { fontSize: 14, fontWeight: '700', color: 'var(--text-main)', marginBottom: 16 },
-  attRow: { flexDirection: 'row', alignItems: 'center', gap: 20, marginBottom: 16 },
-  attCircle: { width: 72, height: 72, borderRadius: 36, backgroundColor: 'var(--bg-icon)', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'var(--border-color)' },
-  attPct: { fontSize: 20, fontWeight: '700' },
-  attLabel: { fontSize: 9, color: 'var(--text-muted)', fontWeight: '600' },
-  attStats: { flex: 1, gap: 6 },
-  attStatRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  attStatLabel: { fontSize: 12, color: 'var(--text-muted)' },
-  attStatVal: { fontSize: 12, fontWeight: '700', color: 'var(--text-main)' },
-  progressBg: { height: 6, backgroundColor: 'var(--bg-icon)', borderRadius: 3, overflow: 'hidden', marginBottom: 8 },
-  progressFill: { height: '100%', borderRadius: 3 },
-  viewAll: { fontSize: 12, color: 'var(--color-accent)', fontWeight: '600', textAlign: 'center', marginTop: 4 },
-  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
-  statCard: { flex: 1, backgroundColor: 'var(--bg-card)', borderRadius: 14, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: 'var(--border-color)' },
-  statIcon: { fontSize: 22, marginBottom: 4 },
-  statNum: { fontSize: 16, fontWeight: '700', color: 'var(--text-main)' },
-  statLabel: { fontSize: 9, color: 'var(--text-muted)', textAlign: 'center', marginTop: 2, fontWeight: '500' },
-  sectionTitle: { fontSize: 15, fontWeight: '700', color: 'var(--text-main)', marginBottom: 12 },
-  hwCard: { backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: 'var(--border-color)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  hwLeft: { flex: 1 },
-  hwTitle: { fontSize: 13, fontWeight: '600', color: 'var(--text-main)' },
-  hwDue: { fontSize: 11, color: 'var(--text-muted)', marginTop: 2 },
-  hwBadge: { fontSize: 10, backgroundColor: 'rgba(0,118,168,0.1)', color: 'var(--color-accent)', paddingVertical: 3, paddingHorizontal: 6, borderRadius: 8, fontWeight: '600' },
-  noticeCard: { backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: 'var(--border-color)', borderLeftWidth: 3, borderLeftColor: 'var(--color-accent)' },
-  noticeTitle: { fontSize: 13, fontWeight: '700', color: 'var(--text-main)', marginBottom: 4 },
-  noticeSub: { fontSize: 11, color: 'var(--text-muted)', lineHeight: 16 },
-  noticeDate: { fontSize: 10, color: 'var(--text-muted)', marginTop: 6, opacity: 0.7 },
-  emptyCard: { backgroundColor: 'var(--bg-card)', borderRadius: 12, padding: 20, alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: 'var(--border-color)' },
-  emptyText: { fontSize: 13, color: 'var(--text-muted)' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F1F5F9',
+  },
+
+  /* Dark Header */
+  darkHeader: {
+    backgroundColor: '#042940',
+    paddingTop: 36,
+    paddingHorizontal: 20,
+    paddingBottom: 44,
+  },
+  userRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  userLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  avatarBorder: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#0076a8',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarInitials: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  userTextCol: {
+    justifyContent: 'center',
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
+  },
+  userCode: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#10B981',
+    marginTop: 2,
+  },
+  topRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  bellBtn: {
+    position: 'relative',
+    padding: 6,
+  },
+  bellIcon: {
+    fontSize: 24,
+  },
+  badgeCount: {
+    position: 'absolute',
+    top: 0,
+    right: -2,
+    backgroundColor: '#EF4444',
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '800',
+  },
+  logoutBtn: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+  },
+  logoutText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+
+  /* Quick Nav Row */
+  quickNavRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  navIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  navIconBoxActive: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  navIcon: {
+    fontSize: 20,
+  },
+  navLabel: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+
+  /* Floating Search Bar */
+  searchWrapper: {
+    paddingHorizontal: 20,
+    marginTop: -22,
+    zIndex: 10,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    height: 48,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+  },
+  searchIcon: {
+    fontSize: 16,
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: '#0F172A',
+  },
+
+  /* Dashboard Body Content */
+  bodyContent: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  summaryBarRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 20,
+  },
+  summaryPill: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+  },
+  summaryIcon: {
+    fontSize: 24,
+  },
+  summaryVal: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  summarySub: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+
+  /* Section Wrapper */
+  sectionWrapper: {
+    marginBottom: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EBF3FA',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  blueBarAccent: {
+    width: 4,
+    height: 16,
+    backgroundColor: '#042940',
+    borderRadius: 2,
+    marginRight: 8,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#042940',
+  },
+  gridCard: {
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    padding: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+  },
+  gridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  gridItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  gridIconBox: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: '#F1F5F9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  gridIcon: {
+    fontSize: 22,
+  },
+  gridLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#334155',
+    textAlign: 'center',
+  },
 });
