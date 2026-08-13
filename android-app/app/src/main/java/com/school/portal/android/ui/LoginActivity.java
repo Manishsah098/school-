@@ -26,9 +26,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         role = getIntent().getStringExtra("ROLE");
-        if (role != null) {
-            binding.tvRoleTitle.setText(role + " LOGIN");
-        }
 
         binding.btnLogin.setOnClickListener(v -> performLogin());
     }
