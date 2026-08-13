@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:gravity="center"
+    android:background="@color/background_dark">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SMART SCHOOL"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select your access level"
+        android:textSize="16sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="48dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAdmin"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Administrator"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        app:cornerRadius="12dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/surface_dark"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="1dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTeacher"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Teacher"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        app:cornerRadius="12dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/surface_dark"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="1dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStudent"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Student / Parent"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        app:cornerRadius="12dp"
+        android:backgroundTint="@color/surface_dark"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="1dp"/>
+
+</LinearLayout>

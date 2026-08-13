@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Smart School Portal",
+    "slug": "school-portal-android",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#042940"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#042940"
+      },
+      "package": "com.school.portal"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

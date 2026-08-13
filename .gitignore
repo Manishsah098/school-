@@ -1,0 +1,25 @@
+# Node & Frontend
+**/node_modules/
+**/dist/
+**/.expo/
+**/.next/
+frontend/node_modules/
+backend/node_modules/
+
+# Maven & Java
+**/target/
+**/apache-maven-*/
+backend/target/
+
+# Android Build & Gradle
+**/build/
+**/.gradle/
+android-app/.gradle/
+android-app/app/build/
+**/local.properties
+**/.idea/
+
+# System & Logs
+*.log
+.DS_Store
+Thumbs.db

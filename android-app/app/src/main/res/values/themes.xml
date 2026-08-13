@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.SchoolPortalAndroid" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        <item name="colorOnPrimary">@color/black</item>
+        
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        
+        <!-- Status bar and window background -->
+        <item name="android:statusBarColor">@color/background_dark</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+    
+    <!-- Custom Style for Inputs -->
+    <style name="PremiumInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="boxBackgroundColor">@color/input_background</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="hintTextColor">@color/primary</item>
+    </style>
+</resources>
