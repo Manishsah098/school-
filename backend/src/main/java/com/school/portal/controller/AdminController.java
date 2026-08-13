@@ -17,23 +17,14 @@ import java.util.Map;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    @Autowired
-    StudentRepository studentRepository;
-
-    @Autowired
-    TeacherRepository teacherRepository;
-
-    @Autowired
-    HomeworkRepository homeworkRepository;
-
-    @Autowired
-    FeeRepository feeRepository;
-
-    @Autowired
-    NoticeRepository noticeRepository;
-
-    @Autowired
-    UserRepository userRepository;
+    @Autowired StudentRepository studentRepository;
+    @Autowired TeacherRepository teacherRepository;
+    @Autowired HomeworkRepository homeworkRepository;
+    @Autowired FeeRepository feeRepository;
+    @Autowired NoticeRepository noticeRepository;
+    @Autowired UserRepository userRepository;
+    @Autowired TimetableRepository timetableRepository;
+    @Autowired ExamResultRepository examResultRepository;
 
     @GetMapping("/stats")
     public ResponseEntity<?> getStats() {
@@ -57,8 +48,8 @@ public class AdminController {
         stats.put("totalStudents", totalStudents);
         stats.put("totalTeachers", totalTeachers);
         stats.put("activeHomework", activeHomework);
-        stats.put("paidFees", paidFees);
-        stats.put("pendingFees", pendingFees);
+        stats.put("feesPaid", paidFees);
+        stats.put("feesPending", pendingFees);
         
         return ResponseEntity.ok(stats);
     }
@@ -82,9 +73,30 @@ public class AdminController {
         return teacherRepository.findAll();
     }
 
+    @DeleteMapping("/teachers/{id}")
+    public ResponseEntity<?> deleteTeacher(@PathVariable String id) {
+        teacherRepository.findById(id).ifPresent(teacher -> {
+            userRepository.deleteById(teacher.getUserId());
+            teacherRepository.deleteById(id);
+        });
+        return ResponseEntity.ok(new MessageResponse("Teacher deleted successfully!"));
+    }
+
     @GetMapping("/fees")
     public List<Fee> getFees() {
         return feeRepository.findAll();
+    }
+
+    @PostMapping("/fees")
+    public ResponseEntity<?> assignFee(@RequestBody Fee fee) {
+        if (fee.getDate() == null || fee.getDate().isEmpty()) {
+            fee.setDate(java.time.LocalDate.now().toString());
+        }
+        if (fee.getStatus() == null || fee.getStatus().isEmpty()) {
+            fee.setStatus("pending");
+        }
+        Fee saved = feeRepository.save(fee);
+        return ResponseEntity.ok(saved);
     }
 
     @PostMapping("/fees/{id}/pay")
@@ -94,6 +106,17 @@ public class AdminController {
             feeRepository.save(fee);
         });
         return ResponseEntity.ok(new MessageResponse("Fee payment marked successfully!"));
+    }
+
+    @GetMapping("/timetable")
+    public List<Timetable> getTimetables() {
+        return timetableRepository.findAll();
+    }
+
+    @PostMapping("/timetable")
+    public ResponseEntity<?> createTimetableSlot(@RequestBody Timetable slot) {
+        Timetable saved = timetableRepository.save(slot);
+        return ResponseEntity.ok(saved);
     }
 
     @PostMapping("/notices")

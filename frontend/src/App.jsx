@@ -3,7 +3,6 @@ import { View, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import axios from 'axios';
 import { APP_CONFIG } from '../config/AppConfig';
 
-// Configure Axios Defaults
 axios.defaults.baseURL = APP_CONFIG.apiBaseUrl;
 
 // Auth & Role
@@ -29,6 +28,11 @@ import AttendanceView from '../features/student/AttendanceView';
 import HomeworkView from '../features/student/HomeworkView';
 import NoticeScreen from '../features/student/NoticeScreen';
 import StudentFeesScreen from '../features/student/StudentFeesScreen';
+import TimetableScreen from '../features/student/TimetableScreen';
+import ExamResultsScreen from '../features/student/ExamResultsScreen';
+import StudyMaterialsScreen from '../features/student/StudyMaterialsScreen';
+import LeaveRequestScreen from '../features/student/LeaveRequestScreen';
+import DigitalIdCardScreen from '../features/student/DigitalIdCardScreen';
 
 export default function App() {
   const [authState, setAuthState] = useState({
@@ -38,21 +42,12 @@ export default function App() {
   });
   const [currentScreen, setCurrentScreen] = useState('Login');
 
-  const getDashboardForRole = (role) => {
-    switch (role) {
-      case 'admin': return 'AdminDashboard';
-      case 'teacher': return 'TeacherDashboard';
-      case 'student': return 'StudentDashboard';
-      default: return 'Login';
-    }
-  };
-
   const handleLoginSuccess = (token, id, name, email, role) => {
     const user = { id, name, email, role };
     setAuthState({ token, user, isLoggedIn: true });
     
     if (role === 'admin') {
-      setCurrentScreen('RoleSelection');
+      setCurrentScreen('AdminDashboard');
     } else if (role === 'teacher') {
       setCurrentScreen('TeacherDashboard');
     } else {
@@ -79,14 +74,6 @@ export default function App() {
     switch (currentScreen) {
       case 'Login':
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
-
-      case 'RoleSelection':
-        return (
-          <RoleSelectionScreen
-            user={authState.user}
-            onSelectRoute={(route) => setCurrentScreen(route)}
-          />
-        );
 
       // ===== Admin Screens =====
       case 'AdminDashboard':
@@ -121,6 +108,16 @@ export default function App() {
         return <NoticeScreen token={token} onBack={goBack} />;
       case 'StudentFeesScreen':
         return <StudentFeesScreen token={token} onBack={goBack} />;
+      case 'TimetableScreen':
+        return <TimetableScreen token={token} onBack={goBack} />;
+      case 'ExamResultsScreen':
+        return <ExamResultsScreen token={token} onBack={goBack} />;
+      case 'StudyMaterialsScreen':
+        return <StudyMaterialsScreen token={token} onBack={goBack} />;
+      case 'LeaveRequestScreen':
+        return <LeaveRequestScreen token={token} onBack={goBack} />;
+      case 'DigitalIdCardScreen':
+        return <DigitalIdCardScreen token={token} onBack={goBack} />;
 
       default:
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
@@ -140,10 +137,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-  }
+  container: { flex: 1 },
+  content: { flex: 1 }
 });

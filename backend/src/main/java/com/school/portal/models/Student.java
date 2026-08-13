@@ -12,6 +12,7 @@ public class Student {
     private String parentName;
     private String userId; // User ref id
     private String classId; // "Grade 10 - A"
+    private String rollNumber;
     private String dob; // "YYYY-MM-DD"
     private String bloodGroup;
     private String phone;
@@ -24,6 +25,7 @@ public class Student {
         this.parentName = parentName;
         this.userId = userId;
         this.classId = classId;
+        this.rollNumber = "101";
         this.dob = dob;
         this.bloodGroup = bloodGroup;
         this.phone = phone;
@@ -46,6 +48,9 @@ public class Student {
 
     public String getClassId() { return classId; }
     public void setClassId(String classId) { this.classId = classId; }
+
+    public String getRollNumber() { return rollNumber != null ? rollNumber : "101"; }
+    public void setRollNumber(String rollNumber) { this.rollNumber = rollNumber; }
 
     public String getDob() { return dob; }
     public void setDob(String dob) { this.dob = dob; }
