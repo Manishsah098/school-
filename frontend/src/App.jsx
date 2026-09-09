@@ -33,6 +33,7 @@ import ExamResultsScreen from '../features/student/ExamResultsScreen';
 import StudyMaterialsScreen from '../features/student/StudyMaterialsScreen';
 import LeaveRequestScreen from '../features/student/LeaveRequestScreen';
 import DigitalIdCardScreen from '../features/student/DigitalIdCardScreen';
+import LibraryScreen from '../features/student/LibraryScreen';
 
 export default function App() {
   const [authState, setAuthState] = useState({
@@ -118,6 +119,8 @@ export default function App() {
         return <LeaveRequestScreen token={token} onBack={goBack} />;
       case 'DigitalIdCardScreen':
         return <DigitalIdCardScreen token={token} onBack={goBack} />;
+      case 'LibraryScreen':
+        return <LibraryScreen token={token} onBack={goBack} />;
 
       default:
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
