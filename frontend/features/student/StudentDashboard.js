@@ -193,18 +193,18 @@ export default function StudentDashboard({ token, onNavigate, onLogout }) {
                 <Text style={styles.gridLabel}>Study Materials</Text>
               </TouchableOpacity>
 
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('LibraryScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>📖</Text>
+                </View>
+                <Text style={styles.gridLabel}>Digital Library</Text>
+              </TouchableOpacity>
+
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('AttendanceView')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📈</Text>
                 </View>
                 <Text style={styles.gridLabel}>Attendance Log</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('StudentFeesScreen')}>
-                <View style={styles.gridIconBox}>
-                  <Text style={styles.gridIcon}>💳</Text>
-                </View>
-                <Text style={styles.gridLabel}>Fee Payments</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -225,19 +225,30 @@ export default function StudentDashboard({ token, onNavigate, onLogout }) {
                 <Text style={styles.gridLabel}>Digital ID Card</Text>
               </TouchableOpacity>
 
+              <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('StudentFeesScreen')}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>💳</Text>
+                </View>
+                <Text style={styles.gridLabel}>Fee Payments</Text>
+              </TouchableOpacity>
+
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('LeaveRequestScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📜</Text>
                 </View>
                 <Text style={styles.gridLabel}>Leave Requests</Text>
               </TouchableOpacity>
+            </View>
 
+            <View style={[styles.gridRow, { marginTop: 18 }]}>
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('NoticeScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📢</Text>
                 </View>
                 <Text style={styles.gridLabel}>Notices</Text>
               </TouchableOpacity>
+              <View style={styles.gridItem} />
+              <View style={styles.gridItem} />
             </View>
           </View>
         </View>
