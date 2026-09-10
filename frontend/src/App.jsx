@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import axios from 'axios';
 import { APP_CONFIG } from '../config/AppConfig';
+import { LanguageProvider } from './context/LanguageContext';
+import LanguageSelectorModal from '../components/LanguageSelectorModal';
 
 axios.defaults.baseURL = APP_CONFIG.apiBaseUrl;
 
@@ -35,7 +37,7 @@ import LeaveRequestScreen from '../features/student/LeaveRequestScreen';
 import DigitalIdCardScreen from '../features/student/DigitalIdCardScreen';
 import LibraryScreen from '../features/student/LibraryScreen';
 
-export default function App() {
+function MainApp() {
   const [authState, setAuthState] = useState({
     token: null,
     user: null,
@@ -135,7 +137,16 @@ export default function App() {
       <View style={styles.content}>
         {renderScreen()}
       </View>
+      <LanguageSelectorModal />
     </SafeAreaView>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <MainApp />
+    </LanguageProvider>
   );
 }
 
