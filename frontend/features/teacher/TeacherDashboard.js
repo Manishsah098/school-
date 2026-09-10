@@ -9,8 +9,11 @@ import {
   TextInput 
 } from 'react-native';
 import axios from 'axios';
+import { useLanguage } from '../../src/context/LanguageContext';
+import LanguageButton from '../../components/LanguageButton';
 
 export default function TeacherDashboard({ token, onNavigate, onLogout }) {
+  const { t, openLanguageModal } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [assignedClass, setAssignedClass] = useState('N/A');
   const [homeworkCount, setHomeworkCount] = useState(0);
@@ -65,8 +68,10 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
             </View>
           </View>
 
-          {/* Right Action Icons (Notification & Logout) */}
+          {/* Right Action Icons (Language, Notification & Logout) */}
           <View style={styles.topRightActions}>
+            <LanguageButton />
+
             <TouchableOpacity style={styles.bellBtn} onPress={() => onNavigate('TeacherNoticeScreen')}>
               <Text style={styles.bellIcon}>🔔</Text>
               <View style={styles.badgeCount}>
@@ -75,7 +80,7 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
-              <Text style={styles.logoutText}>Exit</Text>
+              <Text style={styles.logoutText}>{t('exit')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -86,28 +91,28 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
             <View style={styles.navIconBoxActive}>
               <Text style={styles.navIcon}>📊</Text>
             </View>
-            <Text style={styles.navLabel}>Dashboard</Text>
+            <Text style={styles.navLabel}>{t('dashboard')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('AttendanceScreen')}>
             <View style={styles.navIconBox}>
               <Text style={styles.navIcon}>👤</Text>
             </View>
-            <Text style={styles.navLabel}>Attendance</Text>
+            <Text style={styles.navLabel}>{t('attendance')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('HomeworkUpload')}>
             <View style={styles.navIconBox}>
               <Text style={styles.navIcon}>📤</Text>
             </View>
-            <Text style={styles.navLabel}>Homework</Text>
+            <Text style={styles.navLabel}>{t('homework')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('TeacherNoticeScreen')}>
             <View style={styles.navIconBox}>
               <Text style={styles.navIcon}>📢</Text>
             </View>
-            <Text style={styles.navLabel}>Notices</Text>
+            <Text style={styles.navLabel}>{t('notices')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -118,7 +123,7 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             style={styles.searchInput}
-            placeholder="Search modules..."
+            placeholder={t('searchModules')}
             placeholderTextColor="#94A3B8"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -134,15 +139,15 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
             <Text style={styles.summaryIcon}>🏫</Text>
             <View>
               <Text style={styles.summaryVal}>{assignedClass}</Text>
-              <Text style={styles.summarySub}>Assigned Classroom</Text>
+              <Text style={styles.summarySub}>{t('assignedClassroom')}</Text>
             </View>
           </View>
 
           <View style={styles.summaryPill}>
             <Text style={styles.summaryIcon}>📚</Text>
             <View>
-              <Text style={styles.summaryVal}>{homeworkCount} Tasks</Text>
-              <Text style={styles.summarySub}>Posted Assignments</Text>
+              <Text style={styles.summaryVal}>{homeworkCount} {t('tasks')}</Text>
+              <Text style={styles.summarySub}>{t('postedAssignments')}</Text>
             </View>
           </View>
         </View>
@@ -151,7 +156,7 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
         <View style={styles.sectionWrapper}>
           <View style={styles.sectionHeader}>
             <View style={styles.blueBarAccent} />
-            <Text style={styles.sectionTitle}>Who We Are</Text>
+            <Text style={styles.sectionTitle}>{t('whoWeAre')}</Text>
           </View>
           <View style={styles.gridCard}>
             <View style={styles.gridRow}>
@@ -159,21 +164,21 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>ℹ️</Text>
                 </View>
-                <Text style={styles.gridLabel}>About Us</Text>
+                <Text style={styles.gridLabel}>{t('aboutUs')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('TeacherNoticeScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🔀</Text>
                 </View>
-                <Text style={styles.gridLabel}>Staff Hierarchy</Text>
+                <Text style={styles.gridLabel}>{t('staffHierarchy')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('TeacherNoticeScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>💬</Text>
                 </View>
-                <Text style={styles.gridLabel}>Notice Board</Text>
+                <Text style={styles.gridLabel}>{t('noticeBoard')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -182,14 +187,14 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🛡️</Text>
                 </View>
-                <Text style={styles.gridLabel}>Privacy Policy</Text>
+                <Text style={styles.gridLabel}>{t('privacyPolicy')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('TeacherNoticeScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📇</Text>
                 </View>
-                <Text style={styles.gridLabel}>Employee Directory</Text>
+                <Text style={styles.gridLabel}>{t('employeeDirectory')}</Text>
               </TouchableOpacity>
 
               <View style={styles.gridItem} />
@@ -201,7 +206,7 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
         <View style={styles.sectionWrapper}>
           <View style={styles.sectionHeader}>
             <View style={styles.blueBarAccent} />
-            <Text style={styles.sectionTitle}>Services & Facilities</Text>
+            <Text style={styles.sectionTitle}>{t('servicesFacilities')}</Text>
           </View>
           <View style={styles.gridCard}>
             <View style={styles.gridRow}>
@@ -209,21 +214,21 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🎓</Text>
                 </View>
-                <Text style={styles.gridLabel}>Academics Program</Text>
+                <Text style={styles.gridLabel}>{t('academicsProgram')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('AttendanceScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🏢</Text>
                 </View>
-                <Text style={styles.gridLabel}>Available Facilities</Text>
+                <Text style={styles.gridLabel}>{t('availableFacilities')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('AttendanceScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>👤✓</Text>
                 </View>
-                <Text style={styles.gridLabel}>Admission Procedure</Text>
+                <Text style={styles.gridLabel}>{t('admissionProcedure')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -233,7 +238,7 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
         <View style={styles.sectionWrapper}>
           <View style={styles.sectionHeader}>
             <View style={styles.blueBarAccent} />
-            <Text style={styles.sectionTitle}>Setup</Text>
+            <Text style={styles.sectionTitle}>{t('setup')}</Text>
           </View>
           <View style={styles.gridCard}>
             <View style={styles.gridRow}>
@@ -241,22 +246,34 @@ export default function TeacherDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>⚙️</Text>
                 </View>
-                <Text style={styles.gridLabel}>Setting</Text>
+                <Text style={styles.gridLabel}>{t('settings')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('TeacherDashboard')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📅</Text>
                 </View>
-                <Text style={styles.gridLabel}>Date Format</Text>
+                <Text style={styles.gridLabel}>{t('dateFormat')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('TeacherDashboard')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🔄🔒</Text>
                 </View>
-                <Text style={styles.gridLabel}>Change Password</Text>
+                <Text style={styles.gridLabel}>{t('changePassword')}</Text>
               </TouchableOpacity>
+            </View>
+
+            <View style={[styles.gridRow, { marginTop: 18 }]}>
+              <TouchableOpacity style={styles.gridItem} onPress={openLanguageModal}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>🌐</Text>
+                </View>
+                <Text style={styles.gridLabel}>{t('language')}</Text>
+              </TouchableOpacity>
+
+              <View style={styles.gridItem} />
+              <View style={styles.gridItem} />
             </View>
           </View>
         </View>
@@ -329,7 +346,7 @@ const styles = StyleSheet.create({
   topRightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   bellBtn: {
     position: 'relative',
