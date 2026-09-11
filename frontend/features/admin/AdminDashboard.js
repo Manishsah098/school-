@@ -9,8 +9,11 @@ import {
   TextInput 
 } from 'react-native';
 import axios from 'axios';
+import { useLanguage } from '../../src/context/LanguageContext';
+import LanguageButton from '../../components/LanguageButton';
 
 export default function AdminDashboard({ token, onNavigate, onLogout }) {
+  const { t, openLanguageModal } = useLanguage();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,13 +57,15 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
               <Text style={styles.avatarInitials}>AD</Text>
             </View>
             <View style={styles.userTextCol}>
-              <Text style={styles.userName}>PRINCIPAL STAFF</Text>
-              <Text style={styles.userCode}>Administrator • ADM.001</Text>
+              <Text style={styles.userName}>{t('principalStaff')}</Text>
+              <Text style={styles.userCode}>{t('administrator')} • ADM.001</Text>
             </View>
           </View>
 
           {/* Right Action Icons */}
           <View style={styles.topRightActions}>
+            <LanguageButton />
+
             <TouchableOpacity style={styles.bellBtn} onPress={() => onNavigate('AdminNoticeScreen')}>
               <Text style={styles.bellIcon}>🔔</Text>
               <View style={styles.badgeCount}>
@@ -69,7 +74,7 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
-              <Text style={styles.logoutText}>Exit</Text>
+              <Text style={styles.logoutText}>{t('exit')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -80,28 +85,28 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
             <View style={styles.navIconBoxActive}>
               <Text style={styles.navIcon}>📊</Text>
             </View>
-            <Text style={styles.navLabel}>Overview</Text>
+            <Text style={styles.navLabel}>{t('overview')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('StudentManagement')}>
             <View style={styles.navIconBox}>
               <Text style={styles.navIcon}>👨‍🎓</Text>
             </View>
-            <Text style={styles.navLabel}>Students</Text>
+            <Text style={styles.navLabel}>{t('students')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('TeacherManagement')}>
             <View style={styles.navIconBox}>
               <Text style={styles.navIcon}>👩‍🏫</Text>
             </View>
-            <Text style={styles.navLabel}>Teachers</Text>
+            <Text style={styles.navLabel}>{t('teachers')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('FeesScreen')}>
             <View style={styles.navIconBox}>
               <Text style={styles.navIcon}>💳</Text>
             </View>
-            <Text style={styles.navLabel}>Fees</Text>
+            <Text style={styles.navLabel}>{t('fees')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -112,7 +117,7 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             style={styles.searchInput}
-            placeholder="Search modules..."
+            placeholder={t('searchModules')}
             placeholderTextColor="#94A3B8"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -128,7 +133,7 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
             <Text style={styles.summaryIcon}>🎒</Text>
             <View>
               <Text style={styles.summaryVal}>{stats?.totalStudents || 10}</Text>
-              <Text style={styles.summarySub}>Total Students</Text>
+              <Text style={styles.summarySub}>{t('totalStudents')}</Text>
             </View>
           </TouchableOpacity>
 
@@ -136,7 +141,7 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
             <Text style={styles.summaryIcon}>📝</Text>
             <View>
               <Text style={styles.summaryVal}>{stats?.totalTeachers || 1}</Text>
-              <Text style={styles.summarySub}>Total Teachers</Text>
+              <Text style={styles.summarySub}>{t('totalTeachers')}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -145,7 +150,7 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
         <View style={styles.sectionWrapper}>
           <View style={styles.sectionHeader}>
             <View style={styles.blueBarAccent} />
-            <Text style={styles.sectionTitle}>School Administration</Text>
+            <Text style={styles.sectionTitle}>{t('schoolAdministration')}</Text>
           </View>
           <View style={styles.gridCard}>
             <View style={styles.gridRow}>
@@ -153,21 +158,21 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>👨‍🎓</Text>
                 </View>
-                <Text style={styles.gridLabel}>Student Roster</Text>
+                <Text style={styles.gridLabel}>{t('studentRoster')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('TeacherManagement')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>👩‍🏫</Text>
                 </View>
-                <Text style={styles.gridLabel}>Teacher Roster</Text>
+                <Text style={styles.gridLabel}>{t('teacherRoster')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('FeesScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>💳</Text>
                 </View>
-                <Text style={styles.gridLabel}>Fee Collection</Text>
+                <Text style={styles.gridLabel}>{t('feeCollection')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -176,14 +181,14 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📢</Text>
                 </View>
-                <Text style={styles.gridLabel}>Notice Board</Text>
+                <Text style={styles.gridLabel}>{t('noticeBoard')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('AdminNoticeScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📇</Text>
                 </View>
-                <Text style={styles.gridLabel}>Staff Directory</Text>
+                <Text style={styles.gridLabel}>{t('staffDirectory')}</Text>
               </TouchableOpacity>
 
               <View style={styles.gridItem} />
@@ -195,7 +200,7 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
         <View style={styles.sectionWrapper}>
           <View style={styles.sectionHeader}>
             <View style={styles.blueBarAccent} />
-            <Text style={styles.sectionTitle}>Services & Facilities</Text>
+            <Text style={styles.sectionTitle}>{t('servicesFacilities')}</Text>
           </View>
           <View style={styles.gridCard}>
             <View style={styles.gridRow}>
@@ -203,21 +208,21 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🎓</Text>
                 </View>
-                <Text style={styles.gridLabel}>Academics Program</Text>
+                <Text style={styles.gridLabel}>{t('academicsProgram')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('FeesScreen')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🏢</Text>
                 </View>
-                <Text style={styles.gridLabel}>Available Facilities</Text>
+                <Text style={styles.gridLabel}>{t('availableFacilities')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('StudentManagement')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>👤✓</Text>
                 </View>
-                <Text style={styles.gridLabel}>Admission Procedure</Text>
+                <Text style={styles.gridLabel}>{t('admissionProcedure')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -227,7 +232,7 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
         <View style={styles.sectionWrapper}>
           <View style={styles.sectionHeader}>
             <View style={styles.blueBarAccent} />
-            <Text style={styles.sectionTitle}>Setup</Text>
+            <Text style={styles.sectionTitle}>{t('setup')}</Text>
           </View>
           <View style={styles.gridCard}>
             <View style={styles.gridRow}>
@@ -235,22 +240,34 @@ export default function AdminDashboard({ token, onNavigate, onLogout }) {
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>⚙️</Text>
                 </View>
-                <Text style={styles.gridLabel}>Setting</Text>
+                <Text style={styles.gridLabel}>{t('settings')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('AdminDashboard')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>📅</Text>
                 </View>
-                <Text style={styles.gridLabel}>Date Format</Text>
+                <Text style={styles.gridLabel}>{t('dateFormat')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.gridItem} onPress={() => onNavigate('AdminDashboard')}>
                 <View style={styles.gridIconBox}>
                   <Text style={styles.gridIcon}>🔄🔒</Text>
                 </View>
-                <Text style={styles.gridLabel}>Change Password</Text>
+                <Text style={styles.gridLabel}>{t('changePassword')}</Text>
               </TouchableOpacity>
+            </View>
+
+            <View style={[styles.gridRow, { marginTop: 18 }]}>
+              <TouchableOpacity style={styles.gridItem} onPress={openLanguageModal}>
+                <View style={styles.gridIconBox}>
+                  <Text style={styles.gridIcon}>🌐</Text>
+                </View>
+                <Text style={styles.gridLabel}>{t('language')}</Text>
+              </TouchableOpacity>
+
+              <View style={styles.gridItem} />
+              <View style={styles.gridItem} />
             </View>
           </View>
         </View>
@@ -323,7 +340,7 @@ const styles = StyleSheet.create({
   topRightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   bellBtn: {
     position: 'relative',
